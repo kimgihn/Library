@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "Library.Mapper.LibraryManagerMapper">
+
+<insert id="ManagerInsert" parameterType="manager">
+	insert into manager1 values(manager_seq.nextval,#{m_name},#{m_nick},#{m_id},#{m_password},0)
+</insert>
+
+<select id="selectLogin" parameterType= "Map" resultType="manager">
+	select * from manager1 where m_id = #{m_id} and m_password = #{m_pw}
+</select>
+
+<insert id="RegistBook" parameterType = "book">
+	insert into book values(#{b_code},#{b_name},sysdate,#{b_price},#{b_writer},#{b_imgName},#{b_amount},#{b_intro},book_seq.nextval,#{b_content})
+</insert>
+
+<update id="UpdateBook" parameterType = "book">
+update book
+<set>
+	<if test="b_code != null and !b_code.isEmpty()">b_code = #{b_code},</if>
+	<if test="b_name != null and !b_name.isEmpty()">b_name = #{b_name},</if>
+	<if test="b_price != null and !b_price.isEmpty()">b_price = #{b_price},</if>
+	<if test="b_intro != null and !b_intro.isEmpty()">b_intro = #{b_intro},</if>
+	<if test="b_writer != null and !b_writer.isEmpty()">b_writer = #{b_writer},</if>
+	<if test="b_amount != 0">b_amount = #{b_amount},</if>
+	<if test="b_imgName != null and !b_imgName.isEmpty()">b_imgname = #{b_imgName},</if>
+	<if test="b_content != null and !b_content.isEmpty()">b_content = #{b_content}</if>
+</set>
+where b_no = #{b_no}
+</update>
+
+<delete id="DeleteBook" parameterType = "book">
+	delete from book where b_no = #{b_no}
+</delete>
+
+<select id="MemberList" parameterType = "Map" resultType = "member">
+<![CDATA[
+	select * from (select rownum as rn, A.* from(select * from n_member order by n_no asc)A where rownum <= #{endRow})where rn >= #{startRow}
+]]>
+</select>
+
+<select id="SearchMemberList" parameterType = "searchVo" resultType = "member">
+<![CDATA[
+	select * from (select rownum as rn, A.* from(select * from n_member where n_name Like '%'||#{word}||'%' order by n_no asc)A where rownum <= #{endRow})where rn >= #{startRow}
+]]>
+</select>
+
+<select id="MemberCount" resultType = "Integer">
+	select count(*) from n_member
+</select>
+
+<select id="SearchMemberCount" resultType = "Integer" parameterType = "String">
+	select count(*) from n_member where n_name Like '%'||#{word}||'%'
+</select>
+
+<select id="RentalMembers" parameterType = "Map" resultType = "member">
+<![CDATA[
+	select * from(select A.*,rownum as rn from (select * from n_member where n_lend = '책빌림')A where rownum <= #{endRow})where rn >= #{startRow}
+]]>	
+</select>
+
+<select id="RentalMembersCount" resultType = "Integer">
+	select count(*) from n_member where n_lend = '책빌림'
+</select>
+
+<select id="NotReturnMembers" resultType = "member">
+	select * from n_member where n_lend = '미납'
+</select>
+
+<select id="AllRentalbooks" resultType = "rentalbook">
+	select * from rentalbook
+</select>
+
+<update id="UpdateNotReturnMembers" parameterType = "Long">
+	update n_member set n_lend = '미납' where n_no = #{n_no}
+</update>
+
+<select id="bookExist" parameterType = "Long" resultType = "rentalbook">
+	select * from rentalbook where b_no = #{b_no}
+</select>
+
+<select id="DetailBook" parameterType = "Long" resultType = "book">
+	select * from book where b_no = #{b_no}
+</select>
+
+<select id="RentalBookCount" resultType = "Long">
+	select count(*) from rentalbook
+</select>
+
+<select id="LendMemberCount" parameterType = "Long" resultType = "Integer">
+	select count(*) from book join rentalbook on book.b_no = rentalbook.b_no where rentalbook.n_no = #{n_no}
+</select>
+
+<select id="MemberLendDetail" parameterType = "lendbook" resultType = "book">
+	<![CDATA[
+	select * from(select rownum as rn , A.* from (select book.* from book join rentalbook on book.b_no = rentalbook.b_no where rentalbook.n_no = #{n_no})A where rownum <= #{endRow})where rn >= #{startRow}
+	]]>
+</select>
+
+</mapper>

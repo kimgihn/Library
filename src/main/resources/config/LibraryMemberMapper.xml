@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "Library.Mapper.LibraryMemberMapper">
+
+<insert id="registMember" parameterType = "member">
+insert into n_member values(n_member_seq.nextval, #{n_name}, #{n_nick}, #{n_id}, #{n_password}, sysdate, #{n_phone1}, #{n_Email}, #{n_ssn1}, #{n_ssn2},#{n_profile},#{n_lend}, #{n_phone2})
+</insert>
+
+<select id="LoginMember" parameterType = "Map" resultType = "member">
+	select * from n_member where n_id = #{n_id} and n_password = #{n_pw}
+</select>
+
+<update id="LendBook" parameterType = "rentalVo">
+	update n_member set n_lend = #{n_lend} where n_no = #{n_no}
+</update>
+
+<select id="ShowMemberBook" parameterType = "lendbook" resultType = "book">
+<![CDATA[
+	select * from (select A.*,rownum as rn from(select book.* from book join rentalbook on rentalbook.b_no = book.b_no where rentalbook.n_no = #{n_no})A where rownum <= #{endRow}) where rn >= #{startRow}
+]]>
+</select>
+
+<select id="ShowMemberBookCount" parameterType = "Long" resultType = "Integer">
+	select count(*) from book join rentalbook on rentalbook.b_no = book.b_no where rentalbook.n_no = #{n_no}
+</select>
+<update id="MemberUpdate" parameterType = "member">
+update n_member 
+<set>
+<if test="n_name != null and !n_name.isEmpty">n_name = #{n_name},</if>
+<if test="n_ssn1 != 0">n_ssn1 = #{n_ssn1},</if>
+<if test="n_ssn2 != 0">n_ssn2 = #{n_ssn2},</if>
+<if test="n_profile != null and !n_profile.isEmpty">n_profile = #{n_profile},</if>
+<if test="n_Email != null and !n_Email.isEmpty">n_email = #{n_Email},</if>
+<if test="n_phone1 != null and !n_phone1.isEmpty">n_phone1 = #{n_phone1},</if>
+<if test="n_phone2 != null and !n_phone2.isEmpty">n_phone2 = #{n_phone2},</if>
+<if test="n_id != null and !n_id.isEmpty">n_id = #{n_id},</if>
+<if test="n_password != null and !n_password.isEmpty">n_password = #{n_password},</if>
+</set>
+where n_no = #{n_no}
+</update>
+
+<delete id="DeleteMember" parameterType = "Long">
+DELETE FROM n_member WHERE n_no = #{n_no}
+</delete>
+
+<select id="SearchID" parameterType = "searchIDVo" resultType = "member">
+select * from n_member where n_name = #{n_name} and n_ssn1 = #{n_ssn1} and n_ssn2 = #{n_ssn2}
+</select>
+
+<select id="SearchPW" parameterType = "Map" resultType = "member">
+select * from n_member where n_name = #{n_name} and n_id = #{n_id}
+</select>
+
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace = "Library.Mapper.LibraryBookMapper">
+
+<select id="selectList" parameterType = "Map" resultType = "book">
+	<![CDATA[
+		select * from (select rownum as rn, A.* from(select * from book order by b_code desc)A where rownum <= #{endRow} )where rn >= #{startRow}
+	]]>
+</select>
+
+<select id = "DBCount" resultType = "Integer">
+	select count(*) from book
+</select>
+
+<select id = "searchList" resultType = "book" parameterType = "searchVo">
+	<![CDATA[
+		select * from (select rownum as rn,A.* from(select * from book where b_name like '%'||#{word}||'%' order by b_code desc)A where rownum <= #{endRow})where rn >= #{startRow}
+	]]>
+</select>
+
+<select id="SearchCount" resultType = "Integer" parameterType = "String">
+	select count(*) from book where b_name like '%'||#{word}||'%'
+</select>
+
+<update id="BookMin" parameterType = "Long">
+update book set b_amount = b_amount -1 where b_no = #{b_no}
+</update>
+
+<update id="BookPlus" parameterType = "Long">
+update book set b_amount = b_amount +1 where b_no = #{b_no}
+</update>
+
+<select id="BookAmount" parameterType = "Long" resultType = "Integer">
+select b_amount from book where b_no = #{b_no}
+</select>
+
+</mapper>

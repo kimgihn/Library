@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+<typeAliases>
+	<typeAlias type = "Library.DTO.Manager" alias = "manager"/>
+	<typeAlias type = "Library.DTO.Book" alias = "book"/>
+	<typeAlias type = "Library.DTO.SearchVo" alias = "searchVo"/>
+	<typeAlias type = "Library.DTO.Member" alias = "member"/>
+	<typeAlias type = "Library.DTO.RentalVo" alias = "rentalVo"/>
+	<typeAlias type = "Library.DTO.RentalBook" alias = "rentalBook"/>
+	<typeAlias type = "Library.DTO.ShowMemberBookVo" alias = "lendbook"/>
+	<typeAlias type="Library.DTO.SearchIDVo" alias = "searchIDVo"/>
+</typeAliases>
+
+</configuration>
